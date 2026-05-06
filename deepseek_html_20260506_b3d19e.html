@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>💮 友情リクエスト - 友達になってくれますか？ 💮</title>
+    <style>
+        * {
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(145deg, #ffb7c5 0%, #ff8c9e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', 'Helvetica Neue', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* メインカード */
+        .friendship-card {
+            max-width: 550px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(2px);
+            border-radius: 72px 72px 80px 80px;
+            box-shadow: 0 30px 40px rgba(0, 0, 0, 0.25), 0 0 0 12px #fff8, 0 0 0 16px #ffb34780;
+            overflow: hidden;
+            transition: all 0.2s ease;
+            text-align: center;
+            padding: 28px 20px 42px;
+        }
+
+        /* 装飾ふきだし風 */
+        .message-bubble {
+            background: #fff0e0;
+            border-radius: 64px;
+            padding: 20px 18px;
+            margin: 10px 0 20px;
+            box-shadow: inset 0 1px 3px #0001, 0 12px 18px -10px rgba(0,0,0,0.2);
+            border: 1px solid #ffcf9a;
+        }
+
+        .japanese-question {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #b13e3e;
+            letter-spacing: 2px;
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .japanese-sub {
+            font-size: 1.2rem;
+            color: #d45c5c;
+            margin-top: 12px;
+            display: block;
+            font-weight: 500;
+        }
+
+        .kawaii-emoji {
+            font-size: 3.5rem;
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.2));
+        }
+
+        /* 返信エリア */
+        .reply-area {
+            background: #fef7e8;
+            border-radius: 48px;
+            margin: 18px 0 28px;
+            padding: 18px 20px;
+            box-shadow: inset 0 0 0 2px #fff9, 0 8px 18px rgba(0,0,0,0.1);
+        }
+
+        .reply-label {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #a5592c;
+            background: #ffeecc;
+            display: inline-block;
+            padding: 6px 18px;
+            border-radius: 50px;
+            margin-bottom: 14px;
+        }
+
+        .reply-message {
+            font-size: 1.7rem;
+            font-weight: bold;
+            background: #fff;
+            padding: 18px 12px;
+            border-radius: 48px;
+            min-height: 70px;
+            color: #2f5e3b;
+            border: 1px solid #ffcf9a;
+            word-break: break-word;
+            transition: all 0.2s;
+        }
+
+        /* ボタンコンテナ */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 28px;
+            flex-wrap: wrap;
+            margin: 20px 0 10px;
+            position: relative;
+        }
+
+        /* はいボタン (絶対に動かない・可愛い) */
+        .btn-yes {
+            background: #4caf7f;
+            border: none;
+            padding: 16px 40px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            border-radius: 120px;
+            cursor: pointer;
+            box-shadow: 0 8px 0 #1e5631;
+            transition: 0.05s linear;
+            font-family: inherit;
+            letter-spacing: 2px;
+            min-width: 140px;
+        }
+
+        .btn-yes:active {
+            transform: translateY(4px);
+            box-shadow: 0 4px 0 #1e5631;
+        }
+
+        /* いいえボタン (逃げる・押せない仕掛け) */
+        .btn-no {
+            background: #e4685b;
+            border: none;
+            padding: 16px 40px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            border-radius: 120px;
+            cursor: pointer;
+            box-shadow: 0 8px 0 #913e33;
+            transition: 0.08s ease-out;
+            font-family: inherit;
+            letter-spacing: 2px;
+            min-width: 140px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* ボタンが動くときの滑らかさ */
+        .btn-no {
+            transition: top 0.12s ease-out, left 0.12s ease-out, transform 0.08s;
+        }
+
+        /* 逃げ過ぎ防止: コンテナ内で動くように設定 */
+        .btn-no.trick-move {
+            position: relative;
+        }
+
+        /* リセット＆癒しメッセージ */
+        .reset-area {
+            margin-top: 35px;
+        }
+
+        .reset-btn {
+            background: #f3d382;
+            border: none;
+            padding: 8px 28px;
+            font-size: 1rem;
+            border-radius: 99px;
+            font-weight: bold;
+            color: #5a3e1b;
+            cursor: pointer;
+            transition: 0.1s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .reset-btn:active {
+            transform: scale(0.96);
+        }
+
+        .footer-note {
+            margin-top: 24px;
+            font-size: 0.75rem;
+            color: #bd7a5a;
+            background: #fff3e6;
+            display: inline-block;
+            padding: 6px 18px;
+            border-radius: 40px;
+        }
+
+        /* スクリーンリーダー/キーボード操作にも優しく */
+        button:focus-visible {
+            outline: 3px solid #ff9f4a;
+            outline-offset: 3px;
+        }
+
+        @media (max-width: 500px) {
+            .friendship-card {
+                padding: 20px 16px 36px;
+            }
+            .japanese-question {
+                font-size: 1.7rem;
+            }
+            .btn-yes, .btn-no {
+                padding: 12px 28px;
+                font-size: 1.4rem;
+                min-width: 120px;
+            }
+            .reply-message {
+                font-size: 1.3rem;
+            }
+            .action-buttons {
+                gap: 18px;
+            }
+        }
+
+        /* 心のこもったアニメ */
+        @keyframes happyPop {
+            0% { transform: scale(1); }
+            80% { transform: scale(1.08); }
+            100% { transform: scale(1); }
+        }
+        .reply-pop {
+            animation: happyPop 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+
+<div class="friendship-card" id="friendshipCard">
+    <div class="kawaii-emoji">
+        🎀🌸🐻‍❄️🌸🎀
+    </div>
+    <div class="message-bubble">
+        <div class="japanese-question">
+            一緒に友達になってくれますか？
+        </div>
+        <div class="japanese-sub">
+            🤝 ともだちになりたいです 🤝
+        </div>
+    </div>
+
+    <!-- 彼女の返事がここに表示される -->
+    <div class="reply-area">
+        <div class="reply-label">💬 〜 彼女の返事 〜 💬</div>
+        <div class="reply-message" id="replyMessage">
+            ❤️‍🩹 まだ返事を待っています...
+        </div>
+    </div>
+
+    <!-- YES / NO ボタンエリア -->
+    <div class="action-buttons" id="buttonContainer">
+        <button class="btn-yes" id="yesBtn">✅ はい</button>
+        <button class="btn-no" id="noBtn">❌ いいえ</button>
+    </div>
+
+    <!-- リセット & 遊び直しボタン -->
+    <div class="reset-area">
+        <button class="reset-btn" id="resetBtn">🔄 もう一度 はじめから</button>
+        <div class="footer-note">
+            ✨ 「いいえ」ボタンは逃げます ✨ でも逃げ切れない運命✨
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // 日本語の返答セット (ハッピー or やんわり)
+        const POSITIVE_REPLIES = [
+            "はい！ もちろん友達になりたいです 🎉✨",
+            "とっても嬉しい！ よろしくね、新しい友達 💕🌸",
+            "もちろんです！ 一緒に楽しいことしましょう 🥰",
+            "はい！ 大切な友達になりましょう 🤗💖",
+            "喜んで！ よろしくお願いします 🐣💐",
+            "もちろん！ 嬉しすぎるよ〜 🎶⭐"
+        ];
+
+        const NEGATIVE_REPLIES = [
+            "ごめんなさい… でも大丈夫？ 😢",
+            "今はちょっと… でも嫌いじゃないよ 💧",
+            "うーん… まだ友達になるのは不安かも… 🌧️",
+            "申し訳ないですが、今回は… 🙇‍♀️",
+            "その気持ちは嬉しいけど… 友達にはなれないの 🥺"
+        ];
+
+        // DOM 要素
+        const yesButton = document.getElementById('yesBtn');
+        const noButton = document.getElementById('noBtn');
+        const replyMsgDiv = document.getElementById('replyMessage');
+        const resetBtn = document.getElementById('resetBtn');
+        const container = document.getElementById('buttonContainer');
+
+        // 状態管理: 返信が既にされたか？ (ボタンを無効化するため)
+        let hasReplied = false;
+
+        // いいえボタンのデフォルトの位置を保持 (相対配置のまま親コンテナ内で移動)
+        // 可変的な移動範囲の設定: コンテナサイズに応じて動く範囲を計算する
+        // マウスホバー / 触ろうとするたびに逃げる (ポインターが載る/触れる前)
+        let noBtnTrickActive = true;   // まだ返信がないときだけトリック有効
+
+        // 逃げる関数 (いいえボタンがカーソル/指から逃げる)
+        function makeNoButtonRunAway(clientX, clientY) {
+            if (!noBtnTrickActive) return false;    // 返事のあとは動かない
+            if (hasReplied) return false;
+            
+            const btn = noButton;
+            if (!btn) return false;
+            
+            // ボタンの現在の位置情報(ビューポート基準)
+            const btnRect = btn.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+            
+            // カーソル/タッチの位置 (clientX/clientY) に対して、ボタンの中心を逃がす方向ベクトル
+            const btnCenterX = btnRect.left + btnRect.width / 2;
+            const btnCenterY = btnRect.top + btnRect.height / 2;
+            
+            // カーソルからボタンの中心への差分
+            const deltaX = clientX - btnCenterX;
+            const deltaY = clientY - btnCenterY;
+            const distance = Math.hypot(deltaX, deltaY);
+            
+            // もし距離が40px以内なら逃げる (かなり近づいたら即逃走)
+            if (distance < 55) {
+                // 逃げる方向: カーソルとは逆方向へ
+                let escapeX = 0, escapeY = 0;
+                if (Math.abs(deltaX) > 0.01) escapeX = deltaX > 0 ? -1 : 1;
+                if (Math.abs(deltaY) > 0.01) escapeY = deltaY > 0 ? -1 : 1;
+                
+                // 対角線にも逃げるように補正 (ランダム成分を少し加味で狡猾に)
+                if (escapeX === 0 && escapeY === 0) {
+                    escapeX = (Math.random() - 0.5) * 2;
+                    escapeY = (Math.random() - 0.5) * 2;
+                }
+                
+                // 逃げる力: 40 ~ 80px 移動 (大きく逃げる)
+                const movePower = 65;
+                let offsetX = escapeX * movePower;
+                let offsetY = escapeY * movePower;
+                
+                // しかしボタンが親コンテナからはみ出さないように制限 + 極端に見切れ防止
+                // ボタンの現在の相対位置を取得 (style.left, top が設定されてなければ 0 扱い)
+                let currentLeft = 0;
+                let currentTop = 0;
+                const computedStyle = window.getComputedStyle(btn);
+                if (computedStyle.position !== 'absolute') {
+                    // 最初は static/relative かもしれないので絶対位置で動かせるようにする
+                    btn.style.position = 'relative';
+                }
+                // 現在の left / top (px) 数値化
+                let leftVal = btn.style.left ? parseFloat(btn.style.left) : 0;
+                let topVal = btn.style.top ? parseFloat(btn.style.top) : 0;
+                if (isNaN(leftVal)) leftVal = 0;
+                if (isNaN(topVal)) topVal = 0;
+                
+                let newLeft = leftVal + offsetX;
+                let newTop = topVal + offsetY;
+                
+                // コンテナの縁を考慮: コンテナ幅とボタン幅からはみ出さない範囲を計算
+                const containerWidth = container.clientWidth;
+                const containerHeight = container.clientHeight;
+                const btnWidth = btn.offsetWidth;
+                const btnHeight = btn.offsetHeight;
+                
+                // 許容範囲: 左端 minLeft = 0, 右端 maxLeft = containerWidth - btnWidth
+                const minLeft = 0;
+                const maxLeft = Math.max(0, containerWidth - btnWidth);
+                const minTop = 0;
+                const maxTop = Math.max(0, containerHeight - btnHeight);
+                
+                newLeft = Math.min(maxLeft, Math.max(minLeft, newLeft));
+                newTop = Math.min(maxTop, Math.max(minTop, newTop));
+                
+                btn.style.left = newLeft + 'px';
+                btn.style.top = newTop + 'px';
+                
+                // エフェクト: 少し揺れるような追加効果 (楽しい)
+                btn.style.transform = 'rotate(1deg) scale(0.98)';
+                setTimeout(() => {
+                    if (btn) btn.style.transform = '';
+                }, 130);
+                return true;
+            }
+            return false;
+        }
+        
+        // マウスムーブ / タッチムーブ で "いいえボタンから逃げる"
+        function handleMoveToEscape(e) {
+            if (!noBtnTrickActive) return;
+            if (hasReplied) return;
+            let clientX, clientY;
+            if (e.touches) {
+                // タッチイベントの場合
+                if (e.touches.length > 0) {
+                    clientX = e.touches[0].clientX;
+                    clientY = e.touches[0].clientY;
+                } else return;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            makeNoButtonRunAway(clientX, clientY);
+        }
+        
+        // いいえボタンにホバー/タッチ開始時にも逃げる準備 (さらに敏感に)
+        function onNoButtonApproach(e) {
+            if (!noBtnTrickActive) return;
+            if (hasReplied) return;
+            let clientX, clientY;
+            if (e.touches) {
+                if (e.touches.length) {
+                    clientX = e.touches[0].clientX;
+                    clientY = e.touches[0].clientY;
+                } else return;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            makeNoButtonRunAway(clientX, clientY);
+            // さらに touchstart や mouseenter 時にすぐ逃げる。preventDefaultはしない(クリックは許可しない方向)
+            if (e.type === 'touchstart') {
+                e.preventDefault();   // 誤タップで押せないように少し邪魔するが、それでも押そうとしたら押せない? 実際動くのでOK
+            }
+        }
+        
+        // ボタンの「いいえ」が押されようとしたときも完全に逃げる + 押せないように強制キャンセル
+        function blockNoClick(e) {
+            if (!noBtnTrickActive) return true;  // 活性時はクリックさせない
+            if (hasReplied) return false;  // 返信済みなら動かずクリックで拒否反応が出る？でもその時はもういいえ押せるが後に表示制御
+            // トリックアクティブ時は絶対にいいえを押せない: 逃げてさらにクリックを無効化
+            e.preventDefault();
+            e.stopPropagation();
+            // さらに即逃げ
+            let cx = 0, cy = 0;
+            if (e.touches) {
+                if (e.touches[0]) { cx = e.touches[0].clientX; cy = e.touches[0].clientY; }
+                else if (e.clientX) { cx = e.clientX; cy = e.clientY; }
+            } else {
+                cx = e.clientX;
+                cy = e.clientY;
+            }
+            if (cx !== 0 || cy !== 0) makeNoButtonRunAway(cx, cy);
+            
+            // さらに遊び心: あえてメッセージをちらつかせる (でも返信はしない)
+            const tempMsg = document.getElementById('replyMessage');
+            const originalText = tempMsg.innerText;
+            if (!hasReplied) {
+                tempMsg.style.transition = '0.1s';
+                tempMsg.style.backgroundColor = '#ffe0d0';
+                setTimeout(() => { if(tempMsg && !hasReplied) tempMsg.style.backgroundColor = ''; }, 200);
+            }
+            return false;
+        }
+        
+        // 友達になれる (はいを押したとき)
+        function onYes() {
+            if (hasReplied) return;
+            // ランダムなポジティブ返信
+            const randomPos = POSITIVE_REPLIES[Math.floor(Math.random() * POSITIVE_REPLIES.length)];
+            displayReply(randomPos, true);
+            finalizeAfterReply(true);
+        }
+        
+        // いいえ側 (トリックが残っているけど、もし逃げ切れず押されたら… でも通常絶対押せないが万が一のため)
+        // しかし仕様として「いいえが押されたら悲しい返事」にするが、ボタンは逃げてちゃんと押せないようにしている
+        // それでも強引に押せる可能性（タッチ範囲が広いなど）に備えて、onNoClick を定義
+        function onNo() {
+            if (hasReplied) return;
+            // もしもいいえボタンを物理的に押せてしまった場合の処理 (でもトリックで本来無効だが念のため)
+            // 悲しい返事を表示 (でもユーザー体験を壊さない)
+            const randomNeg = NEGATIVE_REPLIES[Math.floor(Math.random() * NEGATIVE_REPLIES.length)];
+            displayReply(randomNeg, false);
+            finalizeAfterReply(false);
+        }
+        
+        // 返信を表示し、状態を完了させる
+        function displayReply(message, isPositive) {
+            replyMsgDiv.innerText = message;
+            replyMsgDiv.classList.add('reply-pop');
+            setTimeout(() => replyMsgDiv.classList.remove('reply-pop'), 400);
+            // ちょっとした感情演出
+            if (isPositive) {
+                replyMsgDiv.style.backgroundColor = "#e0f7e8";
+                replyMsgDiv.style.border = "2px solid #8bc34a";
+            } else {
+                replyMsgDiv.style.backgroundColor = "#ffe3e0";
+                replyMsgDiv.style.border = "2px solid #f0a3a3";
+            }
+        }
+        
+        // 返信後: ボタンすべて無効化、いいえのトリック停止、はいも無効。
+        function finalizeAfterReply(isPositive) {
+            if (hasReplied) return;
+            hasReplied = true;
+            noBtnTrickActive = false;   // 動かないようにする
+            
+            // ボタンが動かないように、いいえボタンの位置固定 + クリック可能にするが、一度返事が出たらyes/no両方押しても効果なし
+            // （「いいえ」は使えなくはなるが再度押しても何もしない）
+            // さらにスタイル変更でボタンを半透明とかではなく視覚的に反応しないように disable風
+            yesButton.disabled = true;
+            noButton.disabled = true;
+            yesButton.style.opacity = "0.7";
+            noButton.style.opacity = "0.7";
+            yesButton.style.cursor = "default";
+            noButton.style.cursor = "default";
+            
+            // もしも悲しい返事の場合、ちょっとした慰めメッセージ or 何もしないが安心を
+            if (!isPositive) {
+                // 心を込めて、でも押せないだけ
+                const extraNote = document.createElement('div');
+                // 何か優しいけれど既にリセットボタンがあるのでスルー
+            }
+        }
+        
+        // リセット機能: すべて初期状態に戻し、「いいえ」ボタンも再び逃げる復活
+        function resetGame() {
+            // 初期メッセージに戻す
+            replyMsgDiv.innerText = "❤️‍🩹 まだ返事を待っています...";
+            replyMsgDiv.style.backgroundColor = "";
+            replyMsgDiv.style.border = "1px solid #ffcf9a";
+            // 有効フラグ
+            hasReplied = false;
+            noBtnTrickActive = true;
+            
+            // ボタンの有効化
+            yesButton.disabled = false;
+            noButton.disabled = false;
+            yesButton.style.opacity = "1";
+            noButton.style.opacity = "1";
+            yesButton.style.cursor = "pointer";
+            noButton.style.cursor = "pointer";
+            
+            // 「いいえ」ボタンの位置をリセット (left, top を空に)
+            noButton.style.position = '';
+            noButton.style.left = '';
+            noButton.style.top = '';
+            noButton.style.transform = '';
+            
+            // 少しだけ遊びで揺れ
+            const card = document.getElementById('friendshipCard');
+            card.style.transform = 'scale(0.99)';
+            setTimeout(() => { if(card) card.style.transform = ''; }, 120);
+        }
+        
+        // イベント登録
+        function bindEvents() {
+            // 「はい」ボタン
+            yesButton.addEventListener('click', onYes);
+            // 「いいえ」ボタンへのクリックは blockNoClick で防ぐが万一押された場合onNoも呼ばれるように
+            noButton.addEventListener('click', function(e) {
+                // もしtrickActiveかつ hasReplied falseなら完全にブロックする。もしブロック後にもし押せてしまった場合のフォールバック
+                if (!hasReplied && noBtnTrickActive) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    // 強制逃走させてクリック無効
+                    return false;
+                } else if (!hasReplied && !noBtnTrickActive) {
+                    // 理論上ありえないがもし何らかの異常でfalseかつ未返信なら普通にonNo
+                    onNo();
+                } else if (hasReplied) {
+                    // もう返事済みなので何もしない
+                    e.preventDefault();
+                }
+            });
+            
+            // 狡猾に noButton にポインターが触れる or タッチ開始で即逃げ
+            noButton.addEventListener('mouseenter', onNoButtonApproach);
+            noButton.addEventListener('touchstart', onNoButtonApproach, {passive: false});
+            // マウスムーブとタッチムーブで追跡逃げ
+            window.addEventListener('mousemove', handleMoveToEscape);
+            window.addEventListener('touchmove', handleMoveToEscape, {passive: false});
+            
+            // リセットボタン
+            resetBtn.addEventListener('click', resetGame);
+        }
+        
+        // 安全にスタイル & 初期化
+        function init() {
+            bindEvents();
+            // いいえボタンが親コンテナ内で絶対値動けるように準備
+            noButton.style.position = 'relative';
+            // 初期位置リセット
+            noButton.style.left = '0px';
+            noButton.style.top = '0px';
+        }
+        
+        init();
+    })();
+</script>
+</body>
+</html>
