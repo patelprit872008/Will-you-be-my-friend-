@@ -2,594 +2,870 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>💮 友情リクエスト - 友達になってくれますか？ 💮</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>🎂 Happy Birthday Eman | Real Butterflies + Romantic Song ❤️</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Dancing+Script:wght@400;700&display=swap');
+
         * {
-            user-select: none;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background: linear-gradient(145deg, #ffb7c5 0%, #ff8c9e 100%);
-            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            background: radial-gradient(circle at center, #1a0b2e 0%, #0a0515 100%);
+            touch-action: pan-x pan-y;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            touch-action: none;
+        }
+
+        /* Mobile UI */
+        .ui-panel {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            text-align: center;
+            pointer-events: none;
+            width: 90%;
+            max-width: 320px;
+        }
+
+        .cut-btn {
+            pointer-events: auto;
+            background: linear-gradient(135deg, #e8897a, #d45a6e, #b83a52);
+            border: none;
+            padding: 14px 25px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            transition: all 0.2s;
+            animation: pulse 2s infinite;
+            width: 100%;
+            letter-spacing: 1px;
+        }
+
+        .cut-btn:active { transform: scale(0.97); }
+        .cut-btn:disabled { opacity: 0.5; animation: none; }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+            50% { box-shadow: 0 8px 35px rgba(184,58,82,0.5); }
+        }
+
+        .butterfly-btn {
+            pointer-events: auto;
+            background: linear-gradient(135deg, #7b2cbf, #9d4edd, #c77dff);
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 6px 20px rgba(157,78,221,0.4);
+            transition: all 0.2s;
+            margin-top: 12px;
+            display: none;
+            width: 100%;
+        }
+        
+        .butterfly-btn:active { transform: scale(0.97); }
+
+        .love-card {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            left: 12px;
+            z-index: 20;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 10px 16px;
+            text-align: center;
+            animation: slideDown 0.5s ease;
+            border: 1px solid rgba(255,255,255,0.12);
+            max-width: calc(100% - 24px);
+            margin: 0 auto;
+        }
+
+        .love-card .greeting { font-size: 0.75rem; color: #FFB7C5; }
+        .love-card .name { font-size: 1.2rem; font-weight: 800; background: linear-gradient(135deg, #FFD6E8, #FF9EAA); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .love-card .sweet-message { font-size: 0.7rem; color: #e8d0e0; margin-top: 5px; font-style: italic; }
+
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-40px); } to { opacity: 1; transform: translateY(0); } }
+
+        .blow-instruction {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(10px);
+            padding: 6px 16px;
+            border-radius: 30px;
+            color: #FFD6E8;
+            font-size: 0.7rem;
+            z-index: 20;
+            pointer-events: none;
+            animation: bounce 1s infinite;
+            white-space: nowrap;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-4px); }
+        }
+
+        /* Popup */
+        .message-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.96);
+            backdrop-filter: blur(20px);
             display: flex;
-            justify-content: center;
             align-items: center;
-            font-family: 'Segoe UI', 'Helvetica Neue', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
-            margin: 0;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.4s ease;
             padding: 20px;
         }
 
-        /* メインカード */
-        .friendship-card {
-            max-width: 550px;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.96);
-            backdrop-filter: blur(2px);
-            border-radius: 72px 72px 80px 80px;
-            box-shadow: 0 30px 40px rgba(0, 0, 0, 0.25), 0 0 0 12px #fff8, 0 0 0 16px #ffb34780;
-            overflow: hidden;
-            transition: all 0.2s ease;
-            text-align: center;
-            padding: 28px 20px 42px;
-        }
-
-        /* 装飾ふきだし風 */
-        .message-bubble {
-            background: #fff0e0;
-            border-radius: 64px;
-            padding: 20px 18px;
-            margin: 10px 0 20px;
-            box-shadow: inset 0 1px 3px #0001, 0 12px 18px -10px rgba(0,0,0,0.2);
-            border: 1px solid #ffcf9a;
-        }
-
-        .japanese-question {
-            font-size: 2.2rem;
-            font-weight: bold;
-            color: #b13e3e;
-            letter-spacing: 2px;
-            margin: 0;
-            line-height: 1.3;
-        }
-
-        .japanese-sub {
-            font-size: 1.2rem;
-            color: #d45c5c;
-            margin-top: 12px;
-            display: block;
-            font-weight: 500;
-        }
-
-        .kawaii-emoji {
-            font-size: 3.5rem;
-            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.2));
-        }
-
-        /* 返信エリア */
-        .reply-area {
-            background: #fef7e8;
-            border-radius: 48px;
-            margin: 18px 0 28px;
-            padding: 18px 20px;
-            box-shadow: inset 0 0 0 2px #fff9, 0 8px 18px rgba(0,0,0,0.1);
-        }
-
-        .reply-label {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #a5592c;
-            background: #ffeecc;
-            display: inline-block;
-            padding: 6px 18px;
-            border-radius: 50px;
-            margin-bottom: 14px;
-        }
-
-        .reply-message {
-            font-size: 1.7rem;
-            font-weight: bold;
-            background: #fff;
-            padding: 18px 12px;
-            border-radius: 48px;
-            min-height: 70px;
-            color: #2f5e3b;
-            border: 1px solid #ffcf9a;
-            word-break: break-word;
-            transition: all 0.2s;
-        }
-
-        /* ボタンコンテナ */
-        .action-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 28px;
-            flex-wrap: wrap;
-            margin: 20px 0 10px;
-            position: relative;
-        }
-
-        /* はいボタン (絶対に動かない・可愛い) */
-        .btn-yes {
-            background: #4caf7f;
-            border: none;
-            padding: 16px 40px;
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: white;
-            border-radius: 120px;
-            cursor: pointer;
-            box-shadow: 0 8px 0 #1e5631;
-            transition: 0.05s linear;
-            font-family: inherit;
-            letter-spacing: 2px;
-            min-width: 140px;
-        }
-
-        .btn-yes:active {
-            transform: translateY(4px);
-            box-shadow: 0 4px 0 #1e5631;
-        }
-
-        /* いいえボタン (逃げる・押せない仕掛け) */
-        .btn-no {
-            background: #e4685b;
-            border: none;
-            padding: 16px 40px;
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: white;
-            border-radius: 120px;
-            cursor: pointer;
-            box-shadow: 0 8px 0 #913e33;
-            transition: 0.08s ease-out;
-            font-family: inherit;
-            letter-spacing: 2px;
-            min-width: 140px;
-            position: relative;
-            z-index: 10;
-        }
-
-        /* ボタンが動くときの滑らかさ */
-        .btn-no {
-            transition: top 0.12s ease-out, left 0.12s ease-out, transform 0.08s;
-        }
-
-        /* 逃げ過ぎ防止: コンテナ内で動くように設定 */
-        .btn-no.trick-move {
-            position: relative;
-        }
-
-        /* リセット＆癒しメッセージ */
-        .reset-area {
-            margin-top: 35px;
-        }
-
-        .reset-btn {
-            background: #f3d382;
-            border: none;
-            padding: 8px 28px;
-            font-size: 1rem;
-            border-radius: 99px;
-            font-weight: bold;
-            color: #5a3e1b;
-            cursor: pointer;
-            transition: 0.1s;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-        }
-
-        .reset-btn:active {
-            transform: scale(0.96);
-        }
-
-        .footer-note {
-            margin-top: 24px;
-            font-size: 0.75rem;
-            color: #bd7a5a;
-            background: #fff3e6;
-            display: inline-block;
-            padding: 6px 18px;
+        .popup-content {
+            background: linear-gradient(145deg, #2a1a2e, #1a0a1e);
             border-radius: 40px;
+            padding: 30px 25px;
+            text-align: center;
+            max-width: 90%;
+            width: 100%;
+            border: 1px solid rgba(255, 158, 170, 0.4);
+            box-shadow: 0 0 40px rgba(184,58,82,0.25);
+            animation: scaleIn 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
         }
 
-        /* スクリーンリーダー/キーボード操作にも優しく */
-        button:focus-visible {
-            outline: 3px solid #ff9f4a;
-            outline-offset: 3px;
+        .popup-content h1 { font-size: 1.8rem; font-family: 'Dancing Script', cursive; background: linear-gradient(135deg, #FFD6E8, #FF9EAA); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .popup-content .message-text { font-size: 0.95rem; margin: 18px 0; line-height: 1.5; color: #ffe0e7; }
+        .popup-content .from-name { font-size: 1.2rem; font-family: 'Dancing Script', cursive; color: #FFB7C5; }
+        .popup-close { background: linear-gradient(95deg, #d45a6e, #b83a52); border: none; padding: 10px 28px; font-size: 0.9rem; font-weight: bold; border-radius: 50px; color: white; cursor: pointer; margin-top: 18px; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes scaleIn { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .music-control {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            z-index: 20;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 6px 14px;
+            cursor: pointer;
+            color: #FFB7C5;
+            font-size: 0.7rem;
+            pointer-events: auto;
+        }
+        
+        .song-indicator {
+            position: absolute;
+            bottom: 12px;
+            left: 95px;
+            z-index: 20;
+            background: rgba(0,0,0,0.45);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            padding: 4px 10px;
+            font-size: 0.6rem;
+            color: #FFB7C5;
+            pointer-events: none;
+            white-space: nowrap;
         }
 
-        @media (max-width: 500px) {
-            .friendship-card {
-                padding: 20px 16px 36px;
-            }
-            .japanese-question {
-                font-size: 1.7rem;
-            }
-            .btn-yes, .btn-no {
-                padding: 12px 28px;
-                font-size: 1.4rem;
-                min-width: 120px;
-            }
-            .reply-message {
-                font-size: 1.3rem;
-            }
-            .action-buttons {
-                gap: 18px;
-            }
+        .final-love-badge {
+            position: fixed;
+            bottom: 12px;
+            right: 12px;
+            z-index: 20;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 6px 14px;
+            font-size: 0.7rem;
+            color: #FFB7C5;
+            font-family: 'Dancing Script', cursive;
+            font-weight: 600;
+            white-space: nowrap;
         }
 
-        /* 心のこもったアニメ */
-        @keyframes happyPop {
-            0% { transform: scale(1); }
-            80% { transform: scale(1.08); }
-            100% { transform: scale(1); }
-        }
-        .reply-pop {
-            animation: happyPop 0.3s ease;
+        @media (orientation: landscape) and (max-height: 500px) {
+            .love-card { top: 5px; padding: 6px 12px; }
+            .love-card .sweet-message { display: none; }
+            .blow-instruction { bottom: 70px; }
+            .cut-btn { padding: 10px 20px; font-size: 1rem; }
         }
     </style>
 </head>
 <body>
 
-<div class="friendship-card" id="friendshipCard">
-    <div class="kawaii-emoji">
-        🎀🌸🐻‍❄️🌸🎀
-    </div>
-    <div class="message-bubble">
-        <div class="japanese-question">
-            一緒に友達になってくれますか？
-        </div>
-        <div class="japanese-sub">
-            🤝 ともだちになりたいです 🤝
-        </div>
-    </div>
+<div id="canvas-container"></div>
 
-    <!-- 彼女の返事がここに表示される -->
-    <div class="reply-area">
-        <div class="reply-label">💬 〜 彼女の返事 〜 💬</div>
-        <div class="reply-message" id="replyMessage">
-            ❤️‍🩹 まだ返事を待っています...
-        </div>
-    </div>
-
-    <!-- YES / NO ボタンエリア -->
-    <div class="action-buttons" id="buttonContainer">
-        <button class="btn-yes" id="yesBtn">✅ はい</button>
-        <button class="btn-no" id="noBtn">❌ いいえ</button>
-    </div>
-
-    <!-- リセット & 遊び直しボタン -->
-    <div class="reset-area">
-        <button class="reset-btn" id="resetBtn">🔄 もう一度 はじめから</button>
-        <div class="footer-note">
-            ✨ 「いいえ」ボタンは逃げます ✨ でも逃げ切れない運命✨
-        </div>
-    </div>
+<div class="love-card">
+    <div class="greeting">💕 My Forever Love 💕</div>
+    <div class="name">Eman</div>
+    <div class="sweet-message">"Every day with you feels like a beautiful dream..."</div>
 </div>
 
-<script>
-    (function() {
-        // 日本語の返答セット (ハッピー or やんわり)
-        const POSITIVE_REPLIES = [
-            "はい！ もちろん友達になりたいです 🎉✨",
-            "とっても嬉しい！ よろしくね、新しい友達 💕🌸",
-            "もちろんです！ 一緒に楽しいことしましょう 🥰",
-            "はい！ 大切な友達になりましょう 🤗💖",
-            "喜んで！ よろしくお願いします 🐣💐",
-            "もちろん！ 嬉しすぎるよ〜 🎶⭐"
-        ];
+<div class="ui-panel">
+    <button class="cut-btn" id="cutCakeBtn">🔪 CUT THE CAKE 🎂</button>
+    <button class="butterfly-btn" id="butterflyBtn">🦋 Release Real Butterflies 🦋</button>
+</div>
 
-        const NEGATIVE_REPLIES = [
-            "ごめんなさい… でも大丈夫？ 😢",
-            "今はちょっと… でも嫌いじゃないよ 💧",
-            "うーん… まだ友達になるのは不安かも… 🌧️",
-            "申し訳ないですが、今回は… 🙇‍♀️",
-            "その気持ちは嬉しいけど… 友達にはなれないの 🥺"
-        ];
+<div class="blow-instruction" id="blowInstruction">
+    💨 Tap on candle flames to blow! 💨
+</div>
 
-        // DOM 要素
-        const yesButton = document.getElementById('yesBtn');
-        const noButton = document.getElementById('noBtn');
-        const replyMsgDiv = document.getElementById('replyMessage');
-        const resetBtn = document.getElementById('resetBtn');
-        const container = document.getElementById('buttonContainer');
+<div class="music-control" id="musicControl">
+    🎵 Play Music
+</div>
+<div class="song-indicator" id="songIndicator">
+    🎂 Happy Birthday + Perfect 🎵
+</div>
 
-        // 状態管理: 返信が既にされたか？ (ボタンを無効化するため)
-        let hasReplied = false;
+<div class="final-love-badge" id="finalLoveBadge" style="display: none;">
+    ✨ Be Loved Eman, From Your Be Loved Prit ✨
+</div>
 
-        // いいえボタンのデフォルトの位置を保持 (相対配置のまま親コンテナ内で移動)
-        // 可変的な移動範囲の設定: コンテナサイズに応じて動く範囲を計算する
-        // マウスホバー / 触ろうとするたびに逃げる (ポインターが載る/触れる前)
-        let noBtnTrickActive = true;   // まだ返信がないときだけトリック有効
+<script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+        }
+    }
+</script>
 
-        // 逃げる関数 (いいえボタンがカーソル/指から逃げる)
-        function makeNoButtonRunAway(clientX, clientY) {
-            if (!noBtnTrickActive) return false;    // 返事のあとは動かない
-            if (hasReplied) return false;
-            
-            const btn = noButton;
-            if (!btn) return false;
-            
-            // ボタンの現在の位置情報(ビューポート基準)
-            const btnRect = btn.getBoundingClientRect();
-            const containerRect = container.getBoundingClientRect();
-            
-            // カーソル/タッチの位置 (clientX/clientY) に対して、ボタンの中心を逃がす方向ベクトル
-            const btnCenterX = btnRect.left + btnRect.width / 2;
-            const btnCenterY = btnRect.top + btnRect.height / 2;
-            
-            // カーソルからボタンの中心への差分
-            const deltaX = clientX - btnCenterX;
-            const deltaY = clientY - btnCenterY;
-            const distance = Math.hypot(deltaX, deltaY);
-            
-            // もし距離が40px以内なら逃げる (かなり近づいたら即逃走)
-            if (distance < 55) {
-                // 逃げる方向: カーソルとは逆方向へ
-                let escapeX = 0, escapeY = 0;
-                if (Math.abs(deltaX) > 0.01) escapeX = deltaX > 0 ? -1 : 1;
-                if (Math.abs(deltaY) > 0.01) escapeY = deltaY > 0 ? -1 : 1;
-                
-                // 対角線にも逃げるように補正 (ランダム成分を少し加味で狡猾に)
-                if (escapeX === 0 && escapeY === 0) {
-                    escapeX = (Math.random() - 0.5) * 2;
-                    escapeY = (Math.random() - 0.5) * 2;
-                }
-                
-                // 逃げる力: 40 ~ 80px 移動 (大きく逃げる)
-                const movePower = 65;
-                let offsetX = escapeX * movePower;
-                let offsetY = escapeY * movePower;
-                
-                // しかしボタンが親コンテナからはみ出さないように制限 + 極端に見切れ防止
-                // ボタンの現在の相対位置を取得 (style.left, top が設定されてなければ 0 扱い)
-                let currentLeft = 0;
-                let currentTop = 0;
-                const computedStyle = window.getComputedStyle(btn);
-                if (computedStyle.position !== 'absolute') {
-                    // 最初は static/relative かもしれないので絶対位置で動かせるようにする
-                    btn.style.position = 'relative';
-                }
-                // 現在の left / top (px) 数値化
-                let leftVal = btn.style.left ? parseFloat(btn.style.left) : 0;
-                let topVal = btn.style.top ? parseFloat(btn.style.top) : 0;
-                if (isNaN(leftVal)) leftVal = 0;
-                if (isNaN(topVal)) topVal = 0;
-                
-                let newLeft = leftVal + offsetX;
-                let newTop = topVal + offsetY;
-                
-                // コンテナの縁を考慮: コンテナ幅とボタン幅からはみ出さない範囲を計算
-                const containerWidth = container.clientWidth;
-                const containerHeight = container.clientHeight;
-                const btnWidth = btn.offsetWidth;
-                const btnHeight = btn.offsetHeight;
-                
-                // 許容範囲: 左端 minLeft = 0, 右端 maxLeft = containerWidth - btnWidth
-                const minLeft = 0;
-                const maxLeft = Math.max(0, containerWidth - btnWidth);
-                const minTop = 0;
-                const maxTop = Math.max(0, containerHeight - btnHeight);
-                
-                newLeft = Math.min(maxLeft, Math.max(minLeft, newLeft));
-                newTop = Math.min(maxTop, Math.max(minTop, newTop));
-                
-                btn.style.left = newLeft + 'px';
-                btn.style.top = newTop + 'px';
-                
-                // エフェクト: 少し揺れるような追加効果 (楽しい)
-                btn.style.transform = 'rotate(1deg) scale(0.98)';
-                setTimeout(() => {
-                    if (btn) btn.style.transform = '';
-                }, 130);
-                return true;
-            }
-            return false;
+<script type="module">
+    import * as THREE from 'three';
+    import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+    
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    // --- Setup Scene ---
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0a0a1a);
+    scene.fog = new THREE.FogExp2(0x0a0a1a, 0.008);
+    
+    const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.3, 1000);
+    camera.position.set(5.2, 3.5, 8);
+    camera.lookAt(0, 1.5, 0);
+    
+    const renderer = new THREE.WebGLRenderer({ antialias: !isMobile, powerPreference: "high-performance" });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = false;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+    
+    const labelRenderer = new CSS2DRenderer();
+    labelRenderer.setSize(window.innerWidth, window.innerHeight);
+    labelRenderer.domElement.style.position = 'absolute';
+    labelRenderer.domElement.style.top = '0px';
+    labelRenderer.domElement.style.left = '0px';
+    labelRenderer.domElement.style.pointerEvents = 'none';
+    container.appendChild(labelRenderer.domElement);
+    
+    // --- ROMANTIC SONGS ---
+    let bgMusic = null;
+    let isMusicPlaying = false;
+    let currentSongIndex = 0;
+    
+    const songs = [
+        { name: "🎂 Happy Birthday To You", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
+        { name: "💕 Perfect - Ed Sheeran (Romantic)", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" }
+    ];
+    
+    function initMusic() {
+        bgMusic = new Audio(songs[currentSongIndex].url);
+        bgMusic.loop = true;
+        bgMusic.volume = 0.35;
+        bgMusic.addEventListener('ended', () => {
+            // Switch to next song
+            currentSongIndex = (currentSongIndex + 1) % songs.length;
+            bgMusic.src = songs[currentSongIndex].url;
+            bgMusic.play();
+            document.getElementById('songIndicator').innerHTML = `🎵 ${songs[currentSongIndex].name} 🎵`;
+        });
+    }
+    
+    function playMusic() {
+        if (!bgMusic) initMusic();
+        if (bgMusic && !isMusicPlaying) {
+            bgMusic.play().catch(e => console.log('Audio needs interaction first'));
+            isMusicPlaying = true;
+            document.getElementById('musicControl').innerHTML = '🎵 Stop Music';
+        }
+    }
+    
+    function stopMusic() {
+        if (bgMusic && isMusicPlaying) {
+            bgMusic.pause();
+            isMusicPlaying = false;
+            document.getElementById('musicControl').innerHTML = '🎵 Play Music';
+        }
+    }
+    
+    document.getElementById('musicControl').addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!bgMusic) initMusic();
+        if (isMusicPlaying) stopMusic();
+        else playMusic();
+    });
+    
+    // --- Lighting ---
+    const ambientLight = new THREE.AmbientLight(0x4a4a6a, 0.7);
+    scene.add(ambientLight);
+    const mainLight = new THREE.DirectionalLight(0xffeedd, 1.0);
+    mainLight.position.set(3, 5, 4);
+    scene.add(mainLight);
+    const fillLight = new THREE.PointLight(0xffaa99, 0.5);
+    fillLight.position.set(-2, 3, 3);
+    scene.add(fillLight);
+    const warmFill = new THREE.PointLight(0xff9966, 0.4);
+    warmFill.position.set(2, 1.8, 2);
+    scene.add(warmFill);
+    
+    // Table
+    const tablePlane = new THREE.Mesh(new THREE.CylinderGeometry(3.2, 3.2, 0.08, 24), new THREE.MeshStandardMaterial({ color: 0x8B5A2B, roughness: 0.7 }));
+    tablePlane.position.y = -0.25;
+    scene.add(tablePlane);
+    
+    // Stars
+    const starCount = isMobile ? 600 : 900;
+    const starGeo = new THREE.BufferGeometry();
+    const starPos = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount; i++) {
+        starPos[i*3] = (Math.random() - 0.5) * 45;
+        starPos[i*3+1] = (Math.random() - 0.5) * 10 + 1;
+        starPos[i*3+2] = (Math.random() - 0.5) * 30 - 10;
+    }
+    starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+    const starsField = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffccdd, size: 0.045, transparent: true, opacity: 0.5 }));
+    scene.add(starsField);
+    
+    // --- REALISTIC CAKE ---
+    const cakeGroup = new THREE.Group();
+    
+    const spongeMat = new THREE.MeshStandardMaterial({ color: 0xd4a574, roughness: 0.65 });
+    const spongeMat2 = new THREE.MeshStandardMaterial({ color: 0xc9946a, roughness: 0.65 });
+    const spongeMat3 = new THREE.MeshStandardMaterial({ color: 0xbf885e, roughness: 0.65 });
+    
+    const bottomTier = new THREE.Mesh(new THREE.CylinderGeometry(1.75, 1.85, 0.56, 64), spongeMat);
+    bottomTier.position.y = 0.28;
+    cakeGroup.add(bottomTier);
+    
+    const middleTier = new THREE.Mesh(new THREE.CylinderGeometry(1.44, 1.48, 0.5, 64), spongeMat2);
+    middleTier.position.y = 0.28 + 0.56;
+    cakeGroup.add(middleTier);
+    
+    const topTier = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.14, 0.5, 64), spongeMat3);
+    topTier.position.y = 0.28 + 0.56 + 0.5;
+    cakeGroup.add(topTier);
+    
+    const frostingMat = new THREE.MeshStandardMaterial({ color: 0xf5e6d3, roughness: 0.5 });
+    
+    const frostingRing1 = new THREE.Mesh(new THREE.TorusGeometry(1.79, 0.08, 32, 120), frostingMat);
+    frostingRing1.rotation.x = Math.PI / 2;
+    frostingRing1.position.y = 0.28 + 0.56;
+    cakeGroup.add(frostingRing1);
+    
+    const frostingRing2 = new THREE.Mesh(new THREE.TorusGeometry(1.48, 0.08, 32, 120), frostingMat);
+    frostingRing2.rotation.x = Math.PI / 2;
+    frostingRing2.position.y = 0.28 + 1.06;
+    cakeGroup.add(frostingRing2);
+    
+    const frostingTop = new THREE.Mesh(new THREE.TorusGeometry(1.13, 0.08, 32, 120), frostingMat);
+    frostingTop.rotation.x = Math.PI / 2;
+    frostingTop.position.y = 0.28 + 1.56;
+    cakeGroup.add(frostingTop);
+    
+    // Sprinkles
+    const sprinkleCount = isMobile ? 100 : 160;
+    for (let i = 0; i < sprinkleCount; i++) {
+        const sprinkle = new THREE.Mesh(new THREE.SphereGeometry(0.04, 6, 6), new THREE.MeshStandardMaterial({ color: [0x8B4513, 0xA0522D, 0xCD853F][Math.floor(Math.random()*3)] }));
+        let yLayer, radius;
+        const r = Math.random();
+        if (r < 0.34) { yLayer = 0.28 + 0.18; radius = 1.7; }
+        else if (r < 0.67) { yLayer = 0.28 + 0.72; radius = 1.42; }
+        else { yLayer = 0.28 + 1.22; radius = 1.08; }
+        const angle = Math.random() * Math.PI * 2;
+        const rad = radius * (0.75 + Math.random() * 0.45);
+        sprinkle.position.x = Math.cos(angle) * rad;
+        sprinkle.position.z = Math.sin(angle) * rad;
+        sprinkle.position.y = yLayer + Math.random() * 0.1;
+        cakeGroup.add(sprinkle);
+    }
+    
+    // Candles
+    const candleMatReal = new THREE.MeshStandardMaterial({ color: 0xf0e0c0, roughness: 0.3 });
+    const flameMatReal = new THREE.MeshStandardMaterial({ color: 0xff8833, emissive: 0xff4411, emissiveIntensity: 0.5 });
+    
+    const candlePositions = [
+        [-0.58, 0.28 + 1.56 + 0.28, 0.48],
+        [0.58, 0.28 + 1.56 + 0.28, 0.48],
+        [0, 0.28 + 1.56 + 0.28, -0.68]
+    ];
+    
+    const candles = [];
+    const flamesList = [];
+    
+    candlePositions.forEach(pos => {
+        const candleBody = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.115, 0.56, 24), candleMatReal);
+        candleBody.position.set(pos[0], pos[1], pos[2]);
+        cakeGroup.add(candleBody);
+        candles.push(candleBody);
+        
+        const flame = new THREE.Mesh(new THREE.ConeGeometry(0.085, 0.16, 12), flameMatReal);
+        flame.position.set(pos[0], pos[1] + 0.3, pos[2]);
+        cakeGroup.add(flame);
+        flamesList.push(flame);
+    });
+    
+    scene.add(cakeGroup);
+    
+    // Floating Text
+    const textDiv = document.createElement('div');
+    textDiv.textContent = '✨ Happy Birthday Eman ✨';
+    textDiv.style.cssText = 'color:#FFB7C5; font-size:22px; font-weight:600; text-shadow:0 0 12px rgba(0,0,0,0.4); font-family:Dancing Script, cursive; background:rgba(0,0,0,0.35); padding:6px 20px; border-radius:50px; backdrop-filter:blur(8px); white-space:nowrap;';
+    const floatingTitle = new CSS2DObject(textDiv);
+    floatingTitle.position.set(0, 3.2, 0);
+    scene.add(floatingTitle);
+    
+    // Knife
+    const knifeGroup = new THREE.Group();
+    const knifeBlade = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.32, 0.8), new THREE.MeshStandardMaterial({ color: 0xaaaacc, metalness: 0.8 }));
+    knifeBlade.position.set(0, 0.16, 0.4);
+    knifeGroup.add(knifeBlade);
+    const knifeHandle = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.3), new THREE.MeshStandardMaterial({ color: 0x7a4a2a }));
+    knifeHandle.position.set(0, 0.16, -0.2);
+    knifeGroup.add(knifeHandle);
+    knifeGroup.visible = false;
+    scene.add(knifeGroup);
+    
+    // --- REALISTIC BUTTERFLIES (Beautiful Textured Wings) ---
+    const butterflies = [];
+    
+    function createRealisticButterfly(x, z) {
+        const group = new THREE.Group();
+        
+        // Wing colors - vibrant realistic
+        const wingColors = [0xff66aa, 0xff88cc, 0xff99dd, 0xff77bb, 0xdd66ff];
+        const wingColor = wingColors[Math.floor(Math.random() * wingColors.length)];
+        const wingMat = new THREE.MeshStandardMaterial({ color: wingColor, emissive: 0xff2288, emissiveIntensity: 0.15, shininess: 60 });
+        
+        // Left upper wing
+        const leftWingUpper = new THREE.Mesh(new THREE.ConeGeometry(0.24, 0.45, 24), wingMat);
+        leftWingUpper.rotation.z = -0.6;
+        leftWingUpper.rotation.x = 0.2;
+        leftWingUpper.position.set(-0.28, 0.05, 0);
+        group.add(leftWingUpper);
+        
+        // Right upper wing
+        const rightWingUpper = new THREE.Mesh(new THREE.ConeGeometry(0.24, 0.45, 24), wingMat);
+        rightWingUpper.rotation.z = 0.6;
+        rightWingUpper.rotation.x = 0.2;
+        rightWingUpper.position.set(0.28, 0.05, 0);
+        group.add(rightWingUpper);
+        
+        // Left lower wing
+        const leftWingLower = new THREE.Mesh(new THREE.ConeGeometry(0.18, 0.35, 20), wingMat);
+        leftWingLower.rotation.z = -0.4;
+        leftWingLower.rotation.x = -0.2;
+        leftWingLower.position.set(-0.22, -0.1, 0);
+        group.add(leftWingLower);
+        
+        // Right lower wing
+        const rightWingLower = new THREE.Mesh(new THREE.ConeGeometry(0.18, 0.35, 20), wingMat);
+        rightWingLower.rotation.z = 0.4;
+        rightWingLower.rotation.x = -0.2;
+        rightWingLower.position.set(0.22, -0.1, 0);
+        group.add(rightWingLower);
+        
+        // Body
+        const body = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.055, 0.32, 12), new THREE.MeshStandardMaterial({ color: 0x5a3a2a, roughness: 0.3 }));
+        body.position.y = -0.05;
+        group.add(body);
+        
+        // Head
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.07, 16, 16), new THREE.MeshStandardMaterial({ color: 0x4a2a1a }));
+        head.position.y = 0.12;
+        group.add(head);
+        
+        // Antennae
+        const antennaMat = new THREE.MeshStandardMaterial({ color: 0x3a2a1a });
+        const antennaL = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.18, 6), antennaMat);
+        antennaL.position.set(-0.08, 0.2, 0);
+        antennaL.rotation.z = -0.3;
+        antennaL.rotation.x = 0.2;
+        group.add(antennaL);
+        
+        const antennaR = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.18, 6), antennaMat);
+        antennaR.position.set(0.08, 0.2, 0);
+        antennaR.rotation.z = 0.3;
+        antennaR.rotation.x = 0.2;
+        group.add(antennaR);
+        
+        // Wing pattern (dots)
+        const dotMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
+        const dot1 = new THREE.Mesh(new THREE.SphereGeometry(0.035, 8, 8), dotMat);
+        dot1.position.set(-0.2, 0.1, 0.03);
+        group.add(dot1);
+        
+        const dot2 = new THREE.Mesh(new THREE.SphereGeometry(0.035, 8, 8), dotMat);
+        dot2.position.set(0.2, 0.1, 0.03);
+        group.add(dot2);
+        
+        group.position.set(x, 1.0 + Math.random() * 1.8, z);
+        group.castShadow = false;
+        scene.add(group);
+        
+        return {
+            mesh: group,
+            angle: Math.random() * Math.PI * 2,
+            speed: 0.015 + Math.random() * 0.018,
+            radius: 1.3 + Math.random() * 3,
+            wingAngle: 0,
+            upperWings: [leftWingUpper, rightWingUpper],
+            lowerWings: [leftWingLower, rightWingLower]
+        };
+    }
+    
+    function releaseButterflies() {
+        const butterflyCount = isMobile ? 12 : 18;
+        for (let i = 0; i < butterflyCount; i++) {
+            setTimeout(() => {
+                const angle = Math.random() * Math.PI * 2;
+                const radius = 1.5 + Math.random() * 3.5;
+                const x = Math.cos(angle) * radius;
+                const z = Math.sin(angle) * radius;
+                const butterfly = createRealisticButterfly(x, z);
+                butterflies.push(butterfly);
+            }, i * 120);
+        }
+        document.getElementById('finalLoveBadge').style.display = 'block';
+    }
+    
+    // --- State ---
+    let candlesBlown = false;
+    let cakeCut = false;
+    let blowMessageShown = false;
+    
+    function showBlowMessage() {
+        if (blowMessageShown) return;
+        blowMessageShown = true;
+        
+        const popup = document.createElement('div');
+        popup.className = 'message-popup';
+        popup.innerHTML = `
+            <div class="popup-content">
+                <div style="font-size: 3.5rem;">🕯️💨✨</div>
+                <h1>You Blew the Candles! 🎂</h1>
+                <div class="message-text">
+                    🌟 "May all your wishes come true, my love! 🌟<br><br>
+                    You light up my world every single day.<br>
+                    I wish you joy, laughter, and endless love."
+                </div>
+                <div class="from-name">💕 With Love, Prit 💕</div>
+                <button class="popup-close" id="closeBlowMsg">❤️ Thank You ❤️</button>
+            </div>
+        `;
+        document.body.appendChild(popup);
+        document.getElementById('closeBlowMsg').addEventListener('click', () => popup.remove());
+    }
+    
+    function blowCandles() {
+        if (candlesBlown) return;
+        candlesBlown = true;
+        
+        flamesList.forEach(flame => { flame.visible = false; });
+        
+        // Smoke effect
+        for (let i = 0; i < 40; i++) {
+            const smoke = new THREE.Mesh(new THREE.SphereGeometry(0.06, 4, 4), new THREE.MeshStandardMaterial({ color: 0xaaaaaa, transparent: true, opacity: 0.35 }));
+            smoke.position.set((Math.random() - 0.5) * 1.2, 1.8 + Math.random() * 0.8, (Math.random() - 0.5) * 1.2);
+            scene.add(smoke);
+            let life = 0;
+            const interval = setInterval(() => {
+                smoke.position.y += 0.025;
+                smoke.scale.multiplyScalar(0.97);
+                life++;
+                if (life > 45) { clearInterval(interval); scene.remove(smoke); }
+            }, 30);
         }
         
-        // マウスムーブ / タッチムーブ で "いいえボタンから逃げる"
-        function handleMoveToEscape(e) {
-            if (!noBtnTrickActive) return;
-            if (hasReplied) return;
-            let clientX, clientY;
-            if (e.touches) {
-                // タッチイベントの場合
-                if (e.touches.length > 0) {
-                    clientX = e.touches[0].clientX;
-                    clientY = e.touches[0].clientY;
-                } else return;
-            } else {
-                clientX = e.clientX;
-                clientY = e.clientY;
-            }
-            makeNoButtonRunAway(clientX, clientY);
+        document.getElementById('blowInstruction').style.display = 'none';
+        showBlowMessage();
+    }
+    
+    function showCutMessage() {
+        const popup = document.createElement('div');
+        popup.className = 'message-popup';
+        popup.innerHTML = `
+            <div class="popup-content">
+                <div style="font-size: 4rem;">🎂💖🔪</div>
+                <h1>Happy Birthday My Beloved Eman!</h1>
+                <div class="message-text">
+                    🌹 "You are the most beautiful gift life has given me. 🌹<br><br>
+                    Every moment with you is a blessing.<br>
+                    I promise to love you more each day.<br>
+                    You are my everything."
+                </div>
+                <div class="from-name">💕 Forever Yours 💕<br>~ Prit ~</div>
+                <button class="popup-close" id="closeCutMsg">❤️ I Love You ❤️</button>
+            </div>
+        `;
+        document.body.appendChild(popup);
+        
+        document.getElementById('closeCutMsg').addEventListener('click', () => {
+            popup.remove();
+            createCelebrationEffects();
+            document.getElementById('butterflyBtn').style.display = 'block';
+        });
+    }
+    
+    function createCelebrationEffects() {
+        for (let i = 0; i < 80; i++) {
+            setTimeout(() => {
+                const heart = document.createElement('div');
+                heart.innerHTML = ['❤️', '💖', '💗', '💕'][Math.floor(Math.random() * 4)];
+                heart.style.position = 'fixed';
+                heart.style.left = Math.random() * window.innerWidth + 'px';
+                heart.style.top = '-40px';
+                heart.style.fontSize = (0.9 + Math.random() * 1.2) + 'rem';
+                heart.style.pointerEvents = 'none';
+                heart.style.zIndex = '2000';
+                heart.style.animation = `heartRain 2.2s linear forwards`;
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 2200);
+            }, i * 35);
         }
         
-        // いいえボタンにホバー/タッチ開始時にも逃げる準備 (さらに敏感に)
-        function onNoButtonApproach(e) {
-            if (!noBtnTrickActive) return;
-            if (hasReplied) return;
-            let clientX, clientY;
-            if (e.touches) {
-                if (e.touches.length) {
-                    clientX = e.touches[0].clientX;
-                    clientY = e.touches[0].clientY;
-                } else return;
-            } else {
-                clientX = e.clientX;
-                clientY = e.clientY;
-            }
-            makeNoButtonRunAway(clientX, clientY);
-            // さらに touchstart や mouseenter 時にすぐ逃げる。preventDefaultはしない(クリックは許可しない方向)
-            if (e.type === 'touchstart') {
-                e.preventDefault();   // 誤タップで押せないように少し邪魔するが、それでも押そうとしたら押せない? 実際動くのでOK
-            }
+        for (let i = 0; i < 100; i++) {
+            setTimeout(() => {
+                const confetti = document.createElement('div');
+                confetti.innerHTML = ['🎉', '🎊', '✨', '🎂'][Math.floor(Math.random() * 4)];
+                confetti.style.position = 'fixed';
+                confetti.style.left = Math.random() * window.innerWidth + 'px';
+                confetti.style.top = '-20px';
+                confetti.style.fontSize = (0.9 + Math.random() * 1) + 'rem';
+                confetti.style.pointerEvents = 'none';
+                confetti.style.zIndex = '2000';
+                confetti.style.animation = `confettiFall 1.5s ease-out forwards`;
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 1500);
+            }, i * 25);
+        }
+    }
+    
+    async function performCut() {
+        if (cakeCut) return;
+        cakeCut = true;
+        
+        playMusic();
+        
+        knifeGroup.visible = true;
+        knifeGroup.position.set(0.7, 1.45, 0.45);
+        
+        for (let i = 0; i < 24; i++) {
+            const t = i / 24;
+            knifeGroup.position.x = 0.7 - t * 1.5;
+            knifeGroup.position.z = 0.45 - t * 0.65;
+            knifeGroup.rotation.z = t * 0.65;
+            await new Promise(r => setTimeout(r, 28));
         }
         
-        // ボタンの「いいえ」が押されようとしたときも完全に逃げる + 押せないように強制キャンセル
-        function blockNoClick(e) {
-            if (!noBtnTrickActive) return true;  // 活性時はクリックさせない
-            if (hasReplied) return false;  // 返信済みなら動かずクリックで拒否反応が出る？でもその時はもういいえ押せるが後に表示制御
-            // トリックアクティブ時は絶対にいいえを押せない: 逃げてさらにクリックを無効化
-            e.preventDefault();
-            e.stopPropagation();
-            // さらに即逃げ
-            let cx = 0, cy = 0;
-            if (e.touches) {
-                if (e.touches[0]) { cx = e.touches[0].clientX; cy = e.touches[0].clientY; }
-                else if (e.clientX) { cx = e.clientX; cy = e.clientY; }
-            } else {
-                cx = e.clientX;
-                cy = e.clientY;
-            }
-            if (cx !== 0 || cy !== 0) makeNoButtonRunAway(cx, cy);
-            
-            // さらに遊び心: あえてメッセージをちらつかせる (でも返信はしない)
-            const tempMsg = document.getElementById('replyMessage');
-            const originalText = tempMsg.innerText;
-            if (!hasReplied) {
-                tempMsg.style.transition = '0.1s';
-                tempMsg.style.backgroundColor = '#ffe0d0';
-                setTimeout(() => { if(tempMsg && !hasReplied) tempMsg.style.backgroundColor = ''; }, 200);
-            }
-            return false;
+        knifeGroup.visible = false;
+        
+        bottomTier.visible = false;
+        middleTier.visible = false;
+        topTier.visible = false;
+        frostingRing1.visible = false;
+        frostingRing2.visible = false;
+        frostingTop.visible = false;
+        candles.forEach(c => c.visible = false);
+        flamesList.forEach(f => f.visible = false);
+        
+        const crumbCount = isMobile ? 200 : 280;
+        for (let i = 0; i < crumbCount; i++) {
+            const piece = new THREE.Mesh(new THREE.BoxGeometry(0.07 + Math.random() * 0.12, 0.06 + Math.random() * 0.1, 0.07 + Math.random() * 0.12), new THREE.MeshStandardMaterial({ color: 0xd4a574 }));
+            piece.position.set((Math.random() - 0.5) * 2.5, 0.3 + Math.random() * 2, (Math.random() - 0.5) * 2.5);
+            scene.add(piece);
+            const vel = { x: (Math.random() - 0.5) * 0.2, y: Math.random() * 0.25 + 0.1, z: (Math.random() - 0.5) * 0.2 };
+            let life = 0;
+            const interval = setInterval(() => {
+                piece.position.x += vel.x;
+                piece.position.y += vel.y;
+                piece.position.z += vel.z;
+                vel.y -= 0.008;
+                life++;
+                if (life > 60) { clearInterval(interval); scene.remove(piece); }
+            }, 16);
         }
         
-        // 友達になれる (はいを押したとき)
-        function onYes() {
-            if (hasReplied) return;
-            // ランダムなポジティブ返信
-            const randomPos = POSITIVE_REPLIES[Math.floor(Math.random() * POSITIVE_REPLIES.length)];
-            displayReply(randomPos, true);
-            finalizeAfterReply(true);
+        const sparkleCount = isMobile ? 400 : 600;
+        const sparkleGeo = new THREE.BufferGeometry();
+        const sparklePos = new Float32Array(sparkleCount * 3);
+        for (let i = 0; i < sparkleCount; i++) {
+            sparklePos[i*3] = (Math.random() - 0.5) * 2.8;
+            sparklePos[i*3+1] = Math.random() * 2.2;
+            sparklePos[i*3+2] = (Math.random() - 0.5) * 2.8;
+        }
+        sparkleGeo.setAttribute('position', new THREE.BufferAttribute(sparklePos, 3));
+        const sparkles = new THREE.Points(sparkleGeo, new THREE.PointsMaterial({ color: 0xffaa77, size: 0.045, blending: THREE.AdditiveBlending }));
+        scene.add(sparkles);
+        setTimeout(() => scene.remove(sparkles), 700);
+        
+        setTimeout(() => showCutMessage(), 400);
+        
+        const burstLight = new THREE.PointLight(0xff6688, 1.5, 10);
+        burstLight.position.set(0, 1.4, 0);
+        scene.add(burstLight);
+        setTimeout(() => scene.remove(burstLight), 1400);
+    }
+    
+    // CSS Animations
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = `
+        @keyframes heartRain { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(360deg); opacity: 0; } }
+        @keyframes confettiFall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(540deg); opacity: 0; } }
+    `;
+    document.head.appendChild(styleSheet);
+    
+    // Event Listeners
+    document.getElementById('cutCakeBtn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!candlesBlown) {
+            alert('💨 First blow the candles! Tap on the candle flames! 💨');
+            return;
+        }
+        performCut();
+        document.getElementById('cutCakeBtn').disabled = true;
+        document.getElementById('cutCakeBtn').textContent = '🎉 CAKE CUT! 🎉';
+    });
+    
+    document.getElementById('butterflyBtn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        releaseButterflies();
+        const btn = document.getElementById('butterflyBtn');
+        btn.disabled = true;
+        btn.textContent = '🦋 Butterflies Flying! 🦋';
+        btn.style.opacity = '0.7';
+    });
+    
+    // Raycaster for candles
+    const raycaster = new THREE.Raycaster();
+    const touchPoint = new THREE.Vector2();
+    
+    function handleTap(event) {
+        if (candlesBlown) return;
+        
+        let clientX, clientY;
+        if (event.touches) {
+            clientX = event.touches[0].clientX;
+            clientY = event.touches[0].clientY;
+            event.preventDefault();
+        } else {
+            clientX = event.clientX;
+            clientY = event.clientY;
         }
         
-        // いいえ側 (トリックが残っているけど、もし逃げ切れず押されたら… でも通常絶対押せないが万が一のため)
-        // しかし仕様として「いいえが押されたら悲しい返事」にするが、ボタンは逃げてちゃんと押せないようにしている
-        // それでも強引に押せる可能性（タッチ範囲が広いなど）に備えて、onNoClick を定義
-        function onNo() {
-            if (hasReplied) return;
-            // もしもいいえボタンを物理的に押せてしまった場合の処理 (でもトリックで本来無効だが念のため)
-            // 悲しい返事を表示 (でもユーザー体験を壊さない)
-            const randomNeg = NEGATIVE_REPLIES[Math.floor(Math.random() * NEGATIVE_REPLIES.length)];
-            displayReply(randomNeg, false);
-            finalizeAfterReply(false);
-        }
+        touchPoint.x = (clientX / renderer.domElement.clientWidth) * 2 - 1;
+        touchPoint.y = -(clientY / renderer.domElement.clientHeight) * 2 + 1;
         
-        // 返信を表示し、状態を完了させる
-        function displayReply(message, isPositive) {
-            replyMsgDiv.innerText = message;
-            replyMsgDiv.classList.add('reply-pop');
-            setTimeout(() => replyMsgDiv.classList.remove('reply-pop'), 400);
-            // ちょっとした感情演出
-            if (isPositive) {
-                replyMsgDiv.style.backgroundColor = "#e0f7e8";
-                replyMsgDiv.style.border = "2px solid #8bc34a";
-            } else {
-                replyMsgDiv.style.backgroundColor = "#ffe3e0";
-                replyMsgDiv.style.border = "2px solid #f0a3a3";
-            }
-        }
+        raycaster.setFromCamera(touchPoint, camera);
+        const intersects = raycaster.intersectObjects(flamesList);
         
-        // 返信後: ボタンすべて無効化、いいえのトリック停止、はいも無効。
-        function finalizeAfterReply(isPositive) {
-            if (hasReplied) return;
-            hasReplied = true;
-            noBtnTrickActive = false;   // 動かないようにする
-            
-            // ボタンが動かないように、いいえボタンの位置固定 + クリック可能にするが、一度返事が出たらyes/no両方押しても効果なし
-            // （「いいえ」は使えなくはなるが再度押しても何もしない）
-            // さらにスタイル変更でボタンを半透明とかではなく視覚的に反応しないように disable風
-            yesButton.disabled = true;
-            noButton.disabled = true;
-            yesButton.style.opacity = "0.7";
-            noButton.style.opacity = "0.7";
-            yesButton.style.cursor = "default";
-            noButton.style.cursor = "default";
-            
-            // もしも悲しい返事の場合、ちょっとした慰めメッセージ or 何もしないが安心を
-            if (!isPositive) {
-                // 心を込めて、でも押せないだけ
-                const extraNote = document.createElement('div');
-                // 何か優しいけれど既にリセットボタンがあるのでスルー
-            }
+        if (intersects.length > 0) {
+            blowCandles();
         }
+    }
+    
+    window.addEventListener('click', handleTap);
+    window.addEventListener('touchstart', handleTap, { passive: false });
+    
+    // Animation Loop
+    let time = 0;
+    
+    function animate() {
+        requestAnimationFrame(animate);
+        time += 0.014;
         
-        // リセット機能: すべて初期状態に戻し、「いいえ」ボタンも再び逃げる復活
-        function resetGame() {
-            // 初期メッセージに戻す
-            replyMsgDiv.innerText = "❤️‍🩹 まだ返事を待っています...";
-            replyMsgDiv.style.backgroundColor = "";
-            replyMsgDiv.style.border = "1px solid #ffcf9a";
-            // 有効フラグ
-            hasReplied = false;
-            noBtnTrickActive = true;
-            
-            // ボタンの有効化
-            yesButton.disabled = false;
-            noButton.disabled = false;
-            yesButton.style.opacity = "1";
-            noButton.style.opacity = "1";
-            yesButton.style.cursor = "pointer";
-            noButton.style.cursor = "pointer";
-            
-            // 「いいえ」ボタンの位置をリセット (left, top を空に)
-            noButton.style.position = '';
-            noButton.style.left = '';
-            noButton.style.top = '';
-            noButton.style.transform = '';
-            
-            // 少しだけ遊びで揺れ
-            const card = document.getElementById('friendshipCard');
-            card.style.transform = 'scale(0.99)';
-            setTimeout(() => { if(card) card.style.transform = ''; }, 120);
-        }
+        cakeGroup.rotation.y = Math.sin(time * 0.2) * 0.04;
+        cakeGroup.position.y = Math.sin(time * 1.2) * 0.005;
+        floatingTitle.position.y = 3.25 + Math.sin(time * 1.4) * 0.01;
+        starsField.rotation.y += 0.001;
         
-        // イベント登録
-        function bindEvents() {
-            // 「はい」ボタン
-            yesButton.addEventListener('click', onYes);
-            // 「いいえ」ボタンへのクリックは blockNoClick で防ぐが万一押された場合onNoも呼ばれるように
-            noButton.addEventListener('click', function(e) {
-                // もしtrickActiveかつ hasReplied falseなら完全にブロックする。もしブロック後にもし押せてしまった場合のフォールバック
-                if (!hasReplied && noBtnTrickActive) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    // 強制逃走させてクリック無効
-                    return false;
-                } else if (!hasReplied && !noBtnTrickActive) {
-                    // 理論上ありえないがもし何らかの異常でfalseかつ未返信なら普通にonNo
-                    onNo();
-                } else if (hasReplied) {
-                    // もう返事済みなので何もしない
-                    e.preventDefault();
-                }
+        if (!candlesBlown) {
+            flamesList.forEach((flame, idx) => {
+                flame.scale.setScalar(0.85 + Math.sin(time * 18 + idx) * 0.2);
             });
-            
-            // 狡猾に noButton にポインターが触れる or タッチ開始で即逃げ
-            noButton.addEventListener('mouseenter', onNoButtonApproach);
-            noButton.addEventListener('touchstart', onNoButtonApproach, {passive: false});
-            // マウスムーブとタッチムーブで追跡逃げ
-            window.addEventListener('mousemove', handleMoveToEscape);
-            window.addEventListener('touchmove', handleMoveToEscape, {passive: false});
-            
-            // リセットボタン
-            resetBtn.addEventListener('click', resetGame);
         }
         
-        // 安全にスタイル & 初期化
-        function init() {
-            bindEvents();
-            // いいえボタンが親コンテナ内で絶対値動けるように準備
-            noButton.style.position = 'relative';
-            // 初期位置リセット
-            noButton.style.left = '0px';
-            noButton.style.top = '0px';
-        }
+        // Animate butterflies with wing flapping
+        butterflies.forEach(butterfly => {
+            butterfly.angle += butterfly.speed;
+            butterfly.mesh.position.x = Math.cos(butterfly.angle) * butterfly.radius;
+            butterfly.mesh.position.z = Math.sin(butterfly.angle) * butterfly.radius;
+            butterfly.mesh.position.y = 1.0 + Math.sin(time * 2.5 + butterfly.angle) * 0.3;
+            
+            const flapAngle = Math.sin(time * 16) * 0.6;
+            if (butterfly.upperWings) {
+                butterfly.upperWings.forEach(wing => {
+                    if (wing) wing.rotation.z = (wing.position.x < 0 ? -0.6 : 0.6) + flapAngle * 0.5;
+                });
+                butterfly.lowerWings.forEach(wing => {
+                    if (wing) wing.rotation.z = (wing.position.x < 0 ? -0.4 : 0.4) + flapAngle * 0.4;
+                });
+            }
+        });
         
-        init();
-    })();
+        camera.position.x = 5.2 + Math.sin(time * 0.12) * 0.1;
+        camera.lookAt(0, 1.5, 0);
+        
+        renderer.render(scene, camera);
+        labelRenderer.render(scene, camera);
+    }
+    
+    animate();
+    
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        labelRenderer.setSize(window.innerWidth, window.innerHeight);
+    });
+    
+    initMusic();
 </script>
 </body>
 </html>
